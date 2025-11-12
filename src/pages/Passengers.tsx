@@ -118,8 +118,12 @@ export default function Passengers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Passenger Management</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Passenger Management</h1>
+        <p className="text-muted-foreground">Manage passenger information and records.</p>
+      </div>
+
+      <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog}>

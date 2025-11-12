@@ -147,8 +147,12 @@ export default function RunwayAssignments() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Runway Assignments</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Runway Assignments</h1>
+        <p className="text-muted-foreground">Manage runway assignments and time windows for flights.</p>
+      </div>
+
+      <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog}>

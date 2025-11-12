@@ -147,8 +147,12 @@ export default function Baggage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Baggage Management</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Baggage Management</h1>
+        <p className="text-muted-foreground">Track and manage passenger baggage.</p>
+      </div>
+
+      <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog}>

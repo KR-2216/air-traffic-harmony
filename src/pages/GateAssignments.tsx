@@ -147,8 +147,12 @@ export default function GateAssignments() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Gate Assignments</h1>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Gate Assignments</h1>
+        <p className="text-muted-foreground">Manage gate assignments and boarding time windows for flights.</p>
+      </div>
+
+      <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog}>
