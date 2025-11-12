@@ -53,7 +53,7 @@ export default function Flights() {
   const fetchData = async () => {
     setLoading(true);
     const [flightsRes, airportsRes, airlinesRes] = await Promise.all([
-      supabase.from('flight').select('*, airline:airline_id(*), departure:departure_airport_id(*), arrival:arrival_airport_id(*)').order('scheduled_departure', { ascending: false }),
+      supabase.from('flight').select('*, airline:airline_id(*), departure:departure_airport_id(*), arrival:arrival_airport_id(*)').order('departure_time', { ascending: false }),
       supabase.from('airport').select('*'),
       supabase.from('airline').select('*'),
     ]);

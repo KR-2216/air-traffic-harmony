@@ -31,7 +31,6 @@ export const Layout = ({ children }: LayoutProps) => {
     { to: '/staff', label: 'Staff', roles: ['admin', 'airline_staff'] },
     { to: '/maintenance', label: 'Maintenance', roles: ['admin', 'maintenance', 'airport_operator'] },
     { to: '/incidents', label: 'Incidents', roles: ['admin', 'security', 'airport_operator'] },
-    { to: '/audit', label: 'Audit Log', roles: ['admin'] },
   ];
 
   const filteredLinks = navLinks.filter(link => 

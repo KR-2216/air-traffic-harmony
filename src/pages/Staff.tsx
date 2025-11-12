@@ -52,7 +52,7 @@ export default function Staff() {
   const fetchData = async () => {
     setLoading(true);
     const [staffRes, airlinesRes] = await Promise.all([
-      supabase.from('staff').select('*, airline:airline_id(*)').order('last_name'),
+      supabase.from('staff').select('*').order('last_name', { ascending: true }),
       supabase.from('airline').select('*'),
     ]);
 
@@ -267,7 +267,7 @@ export default function Staff() {
                         {member.first_name} {member.last_name}
                       </TableCell>
                       <TableCell className="capitalize">{member.position?.replace('_', ' ')}</TableCell>
-                      <TableCell>{member.airline?.airline_name}</TableCell>
+                      <TableCell>{airlines.find(a => a.airline_id === member.airline_id)?.airline_name || '-'}</TableCell>
                       <TableCell>{member.email || '-'}</TableCell>
                       <TableCell>{member.phone || '-'}</TableCell>
                       <TableCell>{member.hire_date ? new Date(member.hire_date).toLocaleDateString() : '-'}</TableCell>
