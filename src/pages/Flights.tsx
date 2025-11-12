@@ -28,6 +28,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 
 export default function Flights() {
   const [flights, setFlights] = useState<any[]>([]);
@@ -35,9 +41,9 @@ export default function Flights() {
   const [airlines, setAirlines] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [airlineDialogOpen, setAirlineDialogOpen] = useState(false);
   const [editingFlight, setEditingFlight] = useState<any>(null);
   const [editingAirline, setEditingAirline] = useState<any>(null);
-  const [airlineDialogOpen, setAirlineDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     flight_number: '',
     airline_id: '',
@@ -215,275 +221,283 @@ export default function Flights() {
 
   return (
     <Layout>
-      <div className="space-y-8">
-        {/* Airlines Section */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">Airlines</h2>
-              <p className="text-muted-foreground">Manage airline information.</p>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Flights & Airlines</h1>
+          <p className="text-muted-foreground">Manage flights and airline information.</p>
+        </div>
+
+        <Tabs defaultValue="flights" className="w-full">
+          <TabsList>
+            <TabsTrigger value="flights">Flights</TabsTrigger>
+            <TabsTrigger value="airlines">Airlines</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="flights" className="space-y-4">
+            <div className="flex justify-end">
+              <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Flight
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>{editingFlight ? 'Edit Flight' : 'Add New Flight'}</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Flight Number</Label>
+                        <Input
+                          required
+                          value={formData.flight_number}
+                          onChange={(e) => setFormData({ ...formData, flight_number: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Airline</Label>
+                        <Select value={formData.airline_id} onValueChange={(value) => setFormData({ ...formData, airline_id: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select airline" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {airlines.map((airline) => (
+                              <SelectItem key={airline.airline_id} value={airline.airline_id}>
+                                {airline.airline_name} ({airline.airline_code})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Departure Airport</Label>
+                        <Select value={formData.departure_airport_id} onValueChange={(value) => setFormData({ ...formData, departure_airport_id: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select airport" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {airports.map((airport) => (
+                              <SelectItem key={airport.airport_id} value={airport.airport_id}>
+                                {airport.airport_name} ({airport.airport_code})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Arrival Airport</Label>
+                        <Select value={formData.arrival_airport_id} onValueChange={(value) => setFormData({ ...formData, arrival_airport_id: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select airport" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {airports.map((airport) => (
+                              <SelectItem key={airport.airport_id} value={airport.airport_id}>
+                                {airport.airport_name} ({airport.airport_code})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Scheduled Departure</Label>
+                        <Input
+                          type="datetime-local"
+                          required
+                          value={formData.scheduled_departure_time}
+                          onChange={(e) => setFormData({ ...formData, scheduled_departure_time: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Scheduled Arrival</Label>
+                        <Input
+                          type="datetime-local"
+                          required
+                          value={formData.scheduled_arrival_time}
+                          onChange={(e) => setFormData({ ...formData, scheduled_arrival_time: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Status</Label>
+                        <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Scheduled">Scheduled</SelectItem>
+                            <SelectItem value="On Time">On Time</SelectItem>
+                            <SelectItem value="Delayed">Delayed</SelectItem>
+                            <SelectItem value="Cancelled">Cancelled</SelectItem>
+                            <SelectItem value="Departed">Departed</SelectItem>
+                            <SelectItem value="Arrived">Arrived</SelectItem>
+                            <SelectItem value="Boarding">Boarding</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                      <Button type="submit">{editingFlight ? 'Update' : 'Create'}</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
-            <Dialog open={airlineDialogOpen} onOpenChange={(open) => { setAirlineDialogOpen(open); if (!open) resetAirlineForm(); }}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Airline
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{editingAirline ? 'Edit Airline' : 'Add New Airline'}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAirlineSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Airline Name</Label>
-                    <Input
-                      required
-                      value={airlineFormData.airline_name}
-                      onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Airline Code</Label>
-                    <Input
-                      required
-                      value={airlineFormData.airline_code}
-                      onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_code: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Country</Label>
-                    <Input
-                      value={airlineFormData.country}
-                      onChange={(e) => setAirlineFormData({ ...airlineFormData, country: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setAirlineDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit">{editingAirline ? 'Update' : 'Create'}</Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
 
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Airline Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Country</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {airlines.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center text-muted-foreground">
-                      No airlines found. Add your first airline to get started.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  airlines.map((airline) => (
-                    <TableRow key={airline.airline_id}>
-                      <TableCell className="font-medium">{airline.airline_name}</TableCell>
-                      <TableCell>{airline.airline_code}</TableCell>
-                      <TableCell>{airline.country || '-'}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="ghost" onClick={() => openEditAirlineDialog(airline)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => handleDeleteAirline(airline.airline_id)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+            {loading ? (
+              <div className="flex justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Flight Number</TableHead>
+                      <TableHead>Airline</TableHead>
+                      <TableHead>Route</TableHead>
+                      <TableHead>Departure</TableHead>
+                      <TableHead>Arrival</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {flights.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
+                          No flights found. Add your first flight to get started.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      flights.map((flight) => (
+                        <TableRow key={flight.flight_id}>
+                          <TableCell className="font-medium">{flight.flight_number}</TableCell>
+                          <TableCell>{flight.airline?.airline_name}</TableCell>
+                          <TableCell>
+                            {flight.departure?.airport_code} → {flight.arrival?.airport_code}
+                          </TableCell>
+                          <TableCell>{new Date(flight.scheduled_departure_time).toLocaleString()}</TableCell>
+                          <TableCell>{new Date(flight.scheduled_arrival_time).toLocaleString()}</TableCell>
+                          <TableCell>
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-foreground">
+                              {flight.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button size="sm" variant="ghost" onClick={() => openEditDialog(flight)}>
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDelete(flight.flight_id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </TabsContent>
 
-        {/* Flights Section */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">Flights</h2>
-              <p className="text-muted-foreground">Manage and monitor all flights.</p>
+          <TabsContent value="airlines" className="space-y-4">
+            <div className="flex justify-end">
+              <Dialog open={airlineDialogOpen} onOpenChange={(open) => { setAirlineDialogOpen(open); if (!open) resetAirlineForm(); }}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Airline
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{editingAirline ? 'Edit Airline' : 'Add New Airline'}</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAirlineSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Airline Name</Label>
+                      <Input
+                        required
+                        value={airlineFormData.airline_name}
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_name: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Airline Code</Label>
+                      <Input
+                        required
+                        value={airlineFormData.airline_code}
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_code: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Country</Label>
+                      <Input
+                        value={airlineFormData.country}
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, country: e.target.value })}
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button type="button" variant="outline" onClick={() => setAirlineDialogOpen(false)}>Cancel</Button>
+                      <Button type="submit">{editingAirline ? 'Update' : 'Create'}</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
-            <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-              <DialogTrigger asChild>
-                <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Flight
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>{editingFlight ? 'Edit Flight' : 'Add New Flight'}</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Flight Number</Label>
-                    <Input
-                      required
-                      value={formData.flight_number}
-                      onChange={(e) => setFormData({ ...formData, flight_number: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Airline</Label>
-                    <Select value={formData.airline_id} onValueChange={(value) => setFormData({ ...formData, airline_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select airline" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {airlines.map((airline) => (
-                          <SelectItem key={airline.airline_id} value={airline.airline_id}>
-                            {airline.airline_name} ({airline.airline_code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Departure Airport</Label>
-                    <Select value={formData.departure_airport_id} onValueChange={(value) => setFormData({ ...formData, departure_airport_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select airport" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {airports.map((airport) => (
-                          <SelectItem key={airport.airport_id} value={airport.airport_id}>
-                            {airport.airport_name} ({airport.airport_code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Arrival Airport</Label>
-                    <Select value={formData.arrival_airport_id} onValueChange={(value) => setFormData({ ...formData, arrival_airport_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select airport" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {airports.map((airport) => (
-                          <SelectItem key={airport.airport_id} value={airport.airport_id}>
-                            {airport.airport_name} ({airport.airport_code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Scheduled Departure</Label>
-                    <Input
-                      type="datetime-local"
-                      required
-                      value={formData.scheduled_departure_time}
-                      onChange={(e) => setFormData({ ...formData, scheduled_departure_time: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Scheduled Arrival</Label>
-                    <Input
-                      type="datetime-local"
-                      required
-                      value={formData.scheduled_arrival_time}
-                      onChange={(e) => setFormData({ ...formData, scheduled_arrival_time: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Scheduled">Scheduled</SelectItem>
-                        <SelectItem value="On Time">On Time</SelectItem>
-                        <SelectItem value="Delayed">Delayed</SelectItem>
-                        <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        <SelectItem value="Departed">Departed</SelectItem>
-                        <SelectItem value="Arrived">Arrived</SelectItem>
-                        <SelectItem value="Boarding">Boarding</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                  <Button type="submit">{editingFlight ? 'Update' : 'Create'}</Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
 
-        {loading ? (
-          <div className="flex justify-center p-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Flight Number</TableHead>
-                  <TableHead>Airline</TableHead>
-                  <TableHead>Route</TableHead>
-                  <TableHead>Departure</TableHead>
-                  <TableHead>Arrival</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {flights.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
-                      No flights found. Add your first flight to get started.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  flights.map((flight) => (
-                    <TableRow key={flight.flight_id}>
-                      <TableCell className="font-medium">{flight.flight_number}</TableCell>
-                      <TableCell>{flight.airline?.airline_name}</TableCell>
-                      <TableCell>
-                        {flight.departure?.airport_code} → {flight.arrival?.airport_code}
-                      </TableCell>
-                      <TableCell>{new Date(flight.scheduled_departure_time).toLocaleString()}</TableCell>
-                      <TableCell>{new Date(flight.scheduled_arrival_time).toLocaleString()}</TableCell>
-                      <TableCell>
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-foreground">
-                          {flight.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="ghost" onClick={() => openEditDialog(flight)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => handleDelete(flight.flight_id)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+            {loading ? (
+              <div className="flex justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Airline Name</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {airlines.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center text-muted-foreground">
+                          No airlines found. Add your first airline to get started.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      airlines.map((airline) => (
+                        <TableRow key={airline.airline_id}>
+                          <TableCell className="font-medium">{airline.airline_name}</TableCell>
+                          <TableCell>{airline.airline_code}</TableCell>
+                          <TableCell>{airline.country || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button size="sm" variant="ghost" onClick={() => openEditAirlineDialog(airline)}>
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeleteAirline(airline.airline_id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
