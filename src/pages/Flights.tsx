@@ -41,9 +41,9 @@ export default function Flights() {
     airline_id: '',
     departure_airport_id: '',
     arrival_airport_id: '',
-    scheduled_departure: '',
-    scheduled_arrival: '',
-    status: 'scheduled',
+    scheduled_departure_time: '',
+    scheduled_arrival_time: '',
+    status: 'Scheduled',
   });
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function Flights() {
   const fetchData = async () => {
     setLoading(true);
     const [flightsRes, airportsRes, airlinesRes] = await Promise.all([
-      supabase.from('flight').select('*, airline:airline_id(*), departure:departure_airport_id(*), arrival:arrival_airport_id(*)').order('departure_time', { ascending: false }),
+      supabase.from('flight').select('*, airline:airline_id(*), departure:departure_airport_id(*), arrival:arrival_airport_id(*)').order('scheduled_departure_time', { ascending: false }),
       supabase.from('airport').select('*'),
       supabase.from('airline').select('*'),
     ]);
@@ -66,11 +66,19 @@ export default function Flights() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const payload = {
+      ...formData,
+      airline_id: formData.airline_id ? Number(formData.airline_id) : null,
+      departure_airport_id: formData.departure_airport_id ? Number(formData.departure_airport_id) : null,
+      arrival_airport_id: formData.arrival_airport_id ? Number(formData.arrival_airport_id) : null,
+      flight_date: formData.scheduled_departure_time ? formData.scheduled_departure_time.slice(0, 10) : null,
+    };
     
     if (editingFlight) {
       const { error } = await supabase
         .from('flight')
-        .update(formData)
+        .update(payload)
         .eq('flight_id', editingFlight.flight_id);
       
       if (error) {
@@ -82,7 +90,7 @@ export default function Flights() {
         resetForm();
       }
     } else {
-      const { error } = await supabase.from('flight').insert([formData]);
+      const { error } = await supabase.from('flight').insert([payload]);
       
       if (error) {
         toast.error('Failed to create flight');
@@ -114,9 +122,9 @@ export default function Flights() {
       airline_id: '',
       departure_airport_id: '',
       arrival_airport_id: '',
-      scheduled_departure: '',
-      scheduled_arrival: '',
-      status: 'scheduled',
+      scheduled_departure_time: '',
+      scheduled_arrival_time: '',
+      status: 'Scheduled',
     });
     setEditingFlight(null);
   };
@@ -125,11 +133,11 @@ export default function Flights() {
     setEditingFlight(flight);
     setFormData({
       flight_number: flight.flight_number,
-      airline_id: flight.airline_id,
-      departure_airport_id: flight.departure_airport_id,
-      arrival_airport_id: flight.arrival_airport_id,
-      scheduled_departure: flight.scheduled_departure?.slice(0, 16) || '',
-      scheduled_arrival: flight.scheduled_arrival?.slice(0, 16) || '',
+      airline_id: String(flight.airline_id || ''),
+      departure_airport_id: String(flight.departure_airport_id || ''),
+      arrival_airport_id: String(flight.arrival_airport_id || ''),
+      scheduled_departure_time: flight.scheduled_departure_time?.slice(0, 16) || '',
+      scheduled_arrival_time: flight.scheduled_arrival_time?.slice(0, 16) || '',
       status: flight.status,
     });
     setDialogOpen(true);
@@ -214,8 +222,8 @@ export default function Flights() {
                     <Input
                       type="datetime-local"
                       required
-                      value={formData.scheduled_departure}
-                      onChange={(e) => setFormData({ ...formData, scheduled_departure: e.target.value })}
+                      value={formData.scheduled_departure_time}
+                      onChange={(e) => setFormData({ ...formData, scheduled_departure_time: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -223,8 +231,8 @@ export default function Flights() {
                     <Input
                       type="datetime-local"
                       required
-                      value={formData.scheduled_arrival}
-                      onChange={(e) => setFormData({ ...formData, scheduled_arrival: e.target.value })}
+                      value={formData.scheduled_arrival_time}
+                      onChange={(e) => setFormData({ ...formData, scheduled_arrival_time: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -234,13 +242,13 @@ export default function Flights() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="scheduled">Scheduled</SelectItem>
-                        <SelectItem value="boarding">Boarding</SelectItem>
-                        <SelectItem value="departed">Departed</SelectItem>
-                        <SelectItem value="in_flight">In Flight</SelectItem>
-                        <SelectItem value="landed">Landed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                        <SelectItem value="delayed">Delayed</SelectItem>
+                        <SelectItem value="Scheduled">Scheduled</SelectItem>
+                        <SelectItem value="On Time">On Time</SelectItem>
+                        <SelectItem value="Delayed">Delayed</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        <SelectItem value="Departed">Departed</SelectItem>
+                        <SelectItem value="Arrived">Arrived</SelectItem>
+                        <SelectItem value="Boarding">Boarding</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -287,17 +295,10 @@ export default function Flights() {
                       <TableCell>
                         {flight.departure?.airport_code} → {flight.arrival?.airport_code}
                       </TableCell>
-                      <TableCell>{new Date(flight.scheduled_departure).toLocaleString()}</TableCell>
-                      <TableCell>{new Date(flight.scheduled_arrival).toLocaleString()}</TableCell>
+                      <TableCell>{new Date(flight.scheduled_departure_time).toLocaleString()}</TableCell>
+                      <TableCell>{new Date(flight.scheduled_arrival_time).toLocaleString()}</TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          flight.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                          flight.status === 'boarding' ? 'bg-yellow-100 text-yellow-800' :
-                          flight.status === 'departed' || flight.status === 'in_flight' ? 'bg-green-100 text-green-800' :
-                          flight.status === 'landed' ? 'bg-gray-100 text-gray-800' :
-                          flight.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                          'bg-orange-100 text-orange-800'
-                        }`}>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-foreground">
                           {flight.status}
                         </span>
                       </TableCell>

@@ -31,18 +31,14 @@ import {
 
 export default function Staff() {
   const [staff, setStaff] = useState<any[]>([]);
-  const [airlines, setAirlines] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<any>(null);
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    name: '',
+    role: '',
     email: '',
     phone: '',
-    position: '',
-    airline_id: '',
-    hire_date: '',
   });
 
   useEffect(() => {
@@ -51,13 +47,17 @@ export default function Staff() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [staffRes, airlinesRes] = await Promise.all([
-      supabase.from('staff').select('*').order('last_name', { ascending: true }),
-      supabase.from('airline').select('*'),
-    ]);
+    const { data, error } = await supabase
+      .from('staff')
+      .select('*')
+      .order('name', { ascending: true });
 
-    if (staffRes.data) setStaff(staffRes.data);
-    if (airlinesRes.data) setAirlines(airlinesRes.data);
+    if (error) {
+      toast.error('Failed to fetch staff');
+      setStaff([]);
+    } else {
+      setStaff(data || []);
+    }
     setLoading(false);
   };
 
@@ -107,13 +107,10 @@ export default function Staff() {
 
   const resetForm = () => {
     setFormData({
-      first_name: '',
-      last_name: '',
+      name: '',
+      role: '',
       email: '',
       phone: '',
-      position: '',
-      airline_id: '',
-      hire_date: '',
     });
     setEditingStaff(null);
   };
@@ -121,13 +118,10 @@ export default function Staff() {
   const openEditDialog = (staffMember: any) => {
     setEditingStaff(staffMember);
     setFormData({
-      first_name: staffMember.first_name,
-      last_name: staffMember.last_name,
+      name: staffMember.name || '',
+      role: staffMember.role || '',
       email: staffMember.email || '',
       phone: staffMember.phone || '',
-      position: staffMember.position,
-      airline_id: staffMember.airline_id,
-      hire_date: staffMember.hire_date?.slice(0, 10) || '',
     });
     setDialogOpen(true);
   };
@@ -154,19 +148,11 @@ export default function Staff() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>First Name</Label>
+                    <Label>Name</Label>
                     <Input
                       required
-                      value={formData.first_name}
-                      onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Last Name</Label>
-                    <Input
-                      required
-                      value={formData.last_name}
-                      onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -186,44 +172,22 @@ export default function Staff() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Position</Label>
-                    <Select value={formData.position} onValueChange={(value) => setFormData({ ...formData, position: value })}>
+                    <Label>Role</Label>
+                    <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select position" />
+                        <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pilot">Pilot</SelectItem>
-                        <SelectItem value="co-pilot">Co-Pilot</SelectItem>
-                        <SelectItem value="flight_attendant">Flight Attendant</SelectItem>
-                        <SelectItem value="ground_crew">Ground Crew</SelectItem>
-                        <SelectItem value="maintenance">Maintenance</SelectItem>
-                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="Pilot">Pilot</SelectItem>
+                        <SelectItem value="Co-Pilot">Co-Pilot</SelectItem>
+                        <SelectItem value="Cabin Crew">Cabin Crew</SelectItem>
+                        <SelectItem value="Ground Staff">Ground Staff</SelectItem>
+                        <SelectItem value="Security">Security</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                        <SelectItem value="Gate Agent">Gate Agent</SelectItem>
+                        <SelectItem value="Maintenance">Maintenance</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Airline</Label>
-                    <Select value={formData.airline_id} onValueChange={(value) => setFormData({ ...formData, airline_id: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select airline" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {airlines.map((airline) => (
-                          <SelectItem key={airline.airline_id} value={airline.airline_id}>
-                            {airline.airline_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Hire Date</Label>
-                    <Input
-                      type="date"
-                      required
-                      value={formData.hire_date}
-                      onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
-                    />
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
@@ -245,11 +209,9 @@ export default function Staff() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Airline</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
-                  <TableHead>Hire Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -263,14 +225,10 @@ export default function Staff() {
                 ) : (
                   staff.map((member) => (
                     <TableRow key={member.staff_id}>
-                      <TableCell className="font-medium">
-                        {member.first_name} {member.last_name}
-                      </TableCell>
-                      <TableCell className="capitalize">{member.position?.replace('_', ' ')}</TableCell>
-                      <TableCell>{airlines.find(a => a.airline_id === member.airline_id)?.airline_name || '-'}</TableCell>
+                      <TableCell className="font-medium">{member.name}</TableCell>
+                      <TableCell>{member.role}</TableCell>
                       <TableCell>{member.email || '-'}</TableCell>
                       <TableCell>{member.phone || '-'}</TableCell>
-                      <TableCell>{member.hire_date ? new Date(member.hire_date).toLocaleDateString() : '-'}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button size="sm" variant="ghost" onClick={() => openEditDialog(member)}>
