@@ -160,6 +160,12 @@ export default function Flights() {
   const handleAirlineSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate airline code length
+    if (airlineFormData.airline_code.length !== 3) {
+      toast.error('Airline code must be exactly 3 characters');
+      return;
+    }
+    
     if (editingAirline) {
       const { error } = await supabase
         .from('airline')
@@ -167,7 +173,8 @@ export default function Flights() {
         .eq('airline_id', editingAirline.airline_id);
       
       if (error) {
-        toast.error('Failed to update airline');
+        console.error('Airline update error:', error);
+        toast.error(error.message || 'Failed to update airline');
       } else {
         toast.success('Airline updated successfully');
         setAirlineDialogOpen(false);
@@ -178,7 +185,8 @@ export default function Flights() {
       const { error } = await supabase.from('airline').insert([airlineFormData]);
       
       if (error) {
-        toast.error('Failed to create airline');
+        console.error('Airline create error:', error);
+        toast.error(error.message || 'Failed to create airline');
       } else {
         toast.success('Airline created successfully');
         setAirlineDialogOpen(false);
@@ -435,10 +443,13 @@ export default function Flights() {
                       <Input
                         required
                         maxLength={3}
+                        minLength={3}
+                        pattern="[A-Z]{3}"
                         value={airlineFormData.airline_code}
-                        onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_code: e.target.value })}
-                        placeholder="e.g., AA, UA"
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_code: e.target.value.toUpperCase() })}
+                        placeholder="AAL"
                       />
+                      <p className="text-xs text-muted-foreground">Must be exactly 3 uppercase letters</p>
                     </div>
                     <div className="space-y-2">
                       <Label>Email</Label>
