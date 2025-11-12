@@ -22,6 +22,7 @@ import RunwayAssignments from './pages/RunwayAssignments';
 import GateAssignments from './pages/GateAssignments';
 import GroundVehicles from './pages/GroundVehicles';
 import StaffCertifications from './pages/StaffCertifications';
+import { Layout } from '@/components/Layout';
 
 const queryClient = new QueryClient();
 
@@ -38,7 +39,9 @@ const App = () => (
               path="/"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'airline_staff', 'gate_agent', 'maintenance', 'security']}>
-                  <Index />
+                  <Layout>
+                    <Index />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -46,7 +49,9 @@ const App = () => (
               path="/flights"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'airline_staff', 'gate_agent']}>
-                  <Flights />
+                  <Layout>
+                    <Flights />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -54,7 +59,9 @@ const App = () => (
               path="/gates"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'gate_agent']}>
-                  <Gates />
+                  <Layout>
+                    <Gates />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -62,7 +69,9 @@ const App = () => (
               path="/airports"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator']}>
-                  <Airports />
+                  <Layout>
+                    <Airports />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -70,7 +79,9 @@ const App = () => (
               path="/passengers"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff', 'gate_agent']}>
-                  <Passengers />
+                  <Layout>
+                    <Passengers />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -78,7 +89,9 @@ const App = () => (
               path="/baggage"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff', 'gate_agent']}>
-                  <Baggage />
+                  <Layout>
+                    <Baggage />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -86,7 +99,9 @@ const App = () => (
               path="/flight-crew"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
-                  <FlightCrew />
+                  <Layout>
+                    <FlightCrew />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -94,7 +109,9 @@ const App = () => (
               path="/runway-assignments"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'gate_agent']}>
-                  <RunwayAssignments />
+                  <Layout>
+                    <RunwayAssignments />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -102,7 +119,9 @@ const App = () => (
               path="/gate-assignments"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'gate_agent']}>
-                  <GateAssignments />
+                  <Layout>
+                    <GateAssignments />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -110,7 +129,9 @@ const App = () => (
               path="/ground-vehicles"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airport_operator']}>
-                  <GroundVehicles />
+                  <Layout>
+                    <GroundVehicles />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -118,7 +139,9 @@ const App = () => (
               path="/staff"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
-                  <Staff />
+                  <Layout>
+                    <Staff />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -126,7 +149,9 @@ const App = () => (
               path="/staff-certifications"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
-                  <StaffCertifications />
+                  <Layout>
+                    <StaffCertifications />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -134,7 +159,9 @@ const App = () => (
               path="/maintenance"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'maintenance', 'airport_operator']}>
-                  <Maintenance />
+                  <Layout>
+                    <Maintenance />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -142,7 +169,9 @@ const App = () => (
               path="/incidents"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'security', 'airport_operator']}>
-                  <Incidents />
+                  <Layout>
+                    <Incidents />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -150,7 +179,9 @@ const App = () => (
               path="/audit"
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
-                  <Audit />
+                  <Layout>
+                    <Audit />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
