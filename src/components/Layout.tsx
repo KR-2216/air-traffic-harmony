@@ -1,12 +1,18 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plane, LogOut, Menu } from 'lucide-react';
+import { Plane, LogOut, Menu, ChevronDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
 
 interface LayoutProps {
@@ -25,23 +31,37 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const navLinks = [
     { to: '/', label: 'Dashboard', roles: ['admin', 'airport_operator', 'airline_staff', 'gate_agent', 'maintenance', 'security'] },
-    { to: '/flights', label: 'Flights', roles: ['admin', 'airport_operator', 'airline_staff', 'gate_agent'] },
-    { to: '/gates', label: 'Gates & Runways', roles: ['admin', 'airport_operator', 'gate_agent'] },
-    { to: '/gate-assignments', label: 'Gate Assignments', roles: ['admin', 'airport_operator', 'gate_agent'] },
-    { to: '/runway-assignments', label: 'Runway Assignments', roles: ['admin', 'airport_operator', 'gate_agent'] },
     { to: '/airports', label: 'Airports', roles: ['admin', 'airport_operator'] },
+    { to: '/gates', label: 'Gates & Runways', roles: ['admin', 'airport_operator', 'gate_agent'] },
     { to: '/passengers', label: 'Passengers', roles: ['admin', 'airline_staff', 'gate_agent'] },
     { to: '/baggage', label: 'Baggage', roles: ['admin', 'airline_staff', 'gate_agent'] },
-    { to: '/staff', label: 'Staff', roles: ['admin', 'airline_staff'] },
-    { to: '/staff-certifications', label: 'Certifications', roles: ['admin', 'airline_staff'] },
-    { to: '/flight-crew', label: 'Flight Crew', roles: ['admin', 'airline_staff'] },
     { to: '/ground-vehicles', label: 'Ground Vehicles', roles: ['admin', 'airport_operator'] },
     { to: '/maintenance', label: 'Maintenance', roles: ['admin', 'maintenance', 'airport_operator'] },
     { to: '/incidents', label: 'Incidents', roles: ['admin', 'security', 'airport_operator'] },
   ];
 
+  const flightMenuItems = [
+    { to: '/flights', label: 'Flights', roles: ['admin', 'airport_operator', 'airline_staff', 'gate_agent'] },
+    { to: '/gate-assignments', label: 'Gate Assignments', roles: ['admin', 'airport_operator', 'gate_agent'] },
+    { to: '/runway-assignments', label: 'Runway Assignments', roles: ['admin', 'airport_operator', 'gate_agent'] },
+  ];
+
+  const staffMenuItems = [
+    { to: '/staff', label: 'Staff', roles: ['admin', 'airline_staff'] },
+    { to: '/flight-crew', label: 'Flight Crew', roles: ['admin', 'airline_staff'] },
+    { to: '/staff-certifications', label: 'Certifications', roles: ['admin', 'airline_staff'] },
+  ];
+
   const filteredLinks = navLinks.filter(link => 
     link.roles.includes(userRole || '')
+  );
+
+  const filteredFlightItems = flightMenuItems.filter(item =>
+    item.roles.includes(userRole || '')
+  );
+
+  const filteredStaffItems = staffMenuItems.filter(item =>
+    item.roles.includes(userRole || '')
   );
 
   const NavItems = ({ mobile = false }) => (
@@ -56,6 +76,76 @@ export const Layout = ({ children }: LayoutProps) => {
           {link.label}
         </Link>
       ))}
+      
+      {/* Flights Dropdown - Desktop */}
+      {!mobile && filteredFlightItems.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-sidebar-foreground hover:text-sidebar-primary transition-colors">
+            Flights <ChevronDown className="h-3 w-3" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="bg-sidebar border-sidebar-border">
+            {filteredFlightItems.map((item) => (
+              <DropdownMenuItem key={item.to} asChild>
+                <Link to={item.to} className="cursor-pointer text-sidebar-foreground hover:text-sidebar-primary">
+                  {item.label}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      {/* Staff Dropdown - Desktop */}
+      {!mobile && filteredStaffItems.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-sidebar-foreground hover:text-sidebar-primary transition-colors">
+            Staff <ChevronDown className="h-3 w-3" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="bg-sidebar border-sidebar-border">
+            {filteredStaffItems.map((item) => (
+              <DropdownMenuItem key={item.to} asChild>
+                <Link to={item.to} className="cursor-pointer text-sidebar-foreground hover:text-sidebar-primary">
+                  {item.label}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      {/* Mobile - Show flight items directly */}
+      {mobile && filteredFlightItems.length > 0 && (
+        <>
+          <div className="text-xs font-semibold text-sidebar-foreground/60 mt-2">FLIGHTS</div>
+          {filteredFlightItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-sidebar-foreground hover:text-sidebar-primary transition-colors pl-2"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </>
+      )}
+
+      {/* Mobile - Show staff items directly */}
+      {mobile && filteredStaffItems.length > 0 && (
+        <>
+          <div className="text-xs font-semibold text-sidebar-foreground/60 mt-2">STAFF</div>
+          {filteredStaffItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium text-sidebar-foreground hover:text-sidebar-primary transition-colors pl-2"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </>
+      )}
     </>
   );
 
