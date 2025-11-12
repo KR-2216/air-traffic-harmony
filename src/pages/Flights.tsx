@@ -439,7 +439,7 @@ export default function Flights() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Airline Code</Label>
+                      <Label>ICAO Code</Label>
                       <Input
                         required
                         maxLength={3}
@@ -488,7 +488,7 @@ export default function Flights() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Airline Name</TableHead>
-                      <TableHead>Code</TableHead>
+                      <TableHead>ICAO Code</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
