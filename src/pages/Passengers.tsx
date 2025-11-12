@@ -13,7 +13,7 @@ interface Passenger {
   passenger_id: number;
   name: string;
   email: string;
-  phone: string;
+  phone: string | null;
 }
 
 export default function Passengers() {
@@ -152,11 +152,12 @@ export default function Passengers() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Phone</Label>
+                <Label>Phone (Optional)</Label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   maxLength={20}
+                  placeholder="Optional"
                 />
               </div>
               <div className="flex justify-end gap-2">

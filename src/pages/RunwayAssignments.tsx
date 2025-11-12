@@ -42,8 +42,7 @@ export default function RunwayAssignments() {
   const [formData, setFormData] = useState({
     flight_id: '',
     runway_id: '',
-    start_time: '',
-    end_time: '',
+    assignment_window: '',
   });
 
   useEffect(() => {
@@ -78,7 +77,7 @@ export default function RunwayAssignments() {
     const data = {
       flight_id: parseInt(formData.flight_id),
       runway_id: parseInt(formData.runway_id),
-      assignment_window: `[${formData.start_time},${formData.end_time})`,
+      assignment_window: formData.assignment_window,
     };
 
     try {
@@ -125,18 +124,16 @@ export default function RunwayAssignments() {
   };
 
   const resetForm = () => {
-    setFormData({ flight_id: '', runway_id: '', start_time: '', end_time: '' });
+    setFormData({ flight_id: '', runway_id: '', assignment_window: '' });
     setEditingAssignment(null);
   };
 
   const openEditDialog = (assignment: RunwayAssignment) => {
-    const [start, end] = assignment.assignment_window.replace('[', '').replace(')', '').split(',');
     setEditingAssignment(assignment);
     setFormData({
       flight_id: assignment.flight_id.toString(),
       runway_id: assignment.runway_id.toString(),
-      start_time: start,
-      end_time: end,
+      assignment_window: assignment.assignment_window,
     });
     setOpen(true);
   };
@@ -195,22 +192,16 @@ export default function RunwayAssignments() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Start Time</Label>
+                <Label>Assignment Window (TSRANGE format)</Label>
                 <Input
                   required
-                  type="datetime-local"
-                  value={formData.start_time}
-                  onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  value={formData.assignment_window}
+                  onChange={(e) => setFormData({ ...formData, assignment_window: e.target.value })}
+                  placeholder='["2024-01-01 10:00:00","2024-01-01 12:00:00"]'
                 />
-              </div>
-              <div className="space-y-2">
-                <Label>End Time</Label>
-                <Input
-                  required
-                  type="datetime-local"
-                  value={formData.end_time}
-                  onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                />
+                <p className="text-xs text-muted-foreground">
+                  Format: ["start_time","end_time"] e.g., ["2024-01-01 10:00:00","2024-01-01 12:00:00"]
+                </p>
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>

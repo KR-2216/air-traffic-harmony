@@ -13,11 +13,11 @@ import { Pencil, Trash2, Luggage } from 'lucide-react';
 interface Baggage {
   baggage_id: number;
   passenger_id: number;
-  baggage_type: string;
-  weight_kg: number;
-  length_cm: number;
-  width_cm: number;
-  height_cm: number;
+  baggage_type: 'Checked' | 'Carry-on';
+  weight_kg: number | null;
+  length_cm: number | null;
+  width_cm: number | null;
+  height_cm: number | null;
   passenger?: { name: string };
 }
 

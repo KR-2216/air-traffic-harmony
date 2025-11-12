@@ -14,9 +14,9 @@ interface StaffCertification {
   certification_id: number;
   staff_id: number;
   certificate_name: string;
-  issuing_authority: string;
+  issuing_authority: string | null;
   issue_date: string;
-  expiry_date: string;
+  expiry_date: string | null;
   staff?: { name: string };
 }
 

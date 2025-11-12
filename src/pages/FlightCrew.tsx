@@ -12,7 +12,7 @@ import { Trash2, Users } from 'lucide-react';
 interface FlightCrew {
   flight_id: number;
   staff_id: number;
-  role: string;
+  role: 'Pilot' | 'Co-Pilot' | 'Cabin Crew' | 'Ground Staff' | 'Security' | 'Admin' | 'Gate Agent' | 'Maintenance';
   flight?: { flight_number: string; airline?: { airline_name: string } };
   staff?: { name: string };
 }
