@@ -15,6 +15,13 @@ import Maintenance from "./pages/Maintenance";
 import Incidents from "./pages/Incidents";
 import Audit from "./pages/Audit";
 import NotFound from "./pages/NotFound";
+import Passengers from './pages/Passengers';
+import Baggage from './pages/Baggage';
+import FlightCrew from './pages/FlightCrew';
+import RunwayAssignments from './pages/RunwayAssignments';
+import GateAssignments from './pages/GateAssignments';
+import GroundVehicles from './pages/GroundVehicles';
+import StaffCertifications from './pages/StaffCertifications';
 
 const queryClient = new QueryClient();
 
@@ -60,10 +67,66 @@ const App = () => (
               }
             />
             <Route
+              path="/passengers"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airline_staff', 'gate_agent']}>
+                  <Passengers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/baggage"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airline_staff', 'gate_agent']}>
+                  <Baggage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/flight-crew"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
+                  <FlightCrew />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/runway-assignments"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'gate_agent']}>
+                  <RunwayAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/gate-assignments"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airport_operator', 'gate_agent']}>
+                  <GateAssignments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ground-vehicles"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airport_operator']}>
+                  <GroundVehicles />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/staff"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
                   <Staff />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/staff-certifications"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'airline_staff']}>
+                  <StaffCertifications />
                 </ProtectedRoute>
               }
             />
