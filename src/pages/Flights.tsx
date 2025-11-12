@@ -56,7 +56,8 @@ export default function Flights() {
   const [airlineFormData, setAirlineFormData] = useState({
     airline_name: '',
     airline_code: '',
-    country: '',
+    email: '',
+    phone: '',
   });
 
   useEffect(() => {
@@ -204,7 +205,8 @@ export default function Flights() {
     setAirlineFormData({
       airline_name: '',
       airline_code: '',
-      country: '',
+      email: '',
+      phone: '',
     });
     setEditingAirline(null);
   };
@@ -214,7 +216,8 @@ export default function Flights() {
     setAirlineFormData({
       airline_name: airline.airline_name,
       airline_code: airline.airline_code,
-      country: airline.country || '',
+      email: airline.email || '',
+      phone: airline.phone || '',
     });
     setAirlineDialogOpen(true);
   };
@@ -431,15 +434,28 @@ export default function Flights() {
                       <Label>Airline Code</Label>
                       <Input
                         required
+                        maxLength={3}
                         value={airlineFormData.airline_code}
                         onChange={(e) => setAirlineFormData({ ...airlineFormData, airline_code: e.target.value })}
+                        placeholder="e.g., AA, UA"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Country</Label>
+                      <Label>Email</Label>
                       <Input
-                        value={airlineFormData.country}
-                        onChange={(e) => setAirlineFormData({ ...airlineFormData, country: e.target.value })}
+                        type="email"
+                        value={airlineFormData.email}
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, email: e.target.value })}
+                        placeholder="contact@airline.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Phone</Label>
+                      <Input
+                        type="tel"
+                        value={airlineFormData.phone}
+                        onChange={(e) => setAirlineFormData({ ...airlineFormData, phone: e.target.value })}
+                        placeholder="+1-800-123-4567"
                       />
                     </div>
                     <div className="flex justify-end gap-2">
@@ -462,14 +478,15 @@ export default function Flights() {
                     <TableRow>
                       <TableHead>Airline Name</TableHead>
                       <TableHead>Code</TableHead>
-                      <TableHead>Country</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {airlines.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground">
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">
                           No airlines found. Add your first airline to get started.
                         </TableCell>
                       </TableRow>
@@ -478,7 +495,8 @@ export default function Flights() {
                         <TableRow key={airline.airline_id}>
                           <TableCell className="font-medium">{airline.airline_name}</TableCell>
                           <TableCell>{airline.airline_code}</TableCell>
-                          <TableCell>{airline.country || '-'}</TableCell>
+                          <TableCell>{airline.email || '-'}</TableCell>
+                          <TableCell>{airline.phone || '-'}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button size="sm" variant="ghost" onClick={() => openEditAirlineDialog(airline)}>
