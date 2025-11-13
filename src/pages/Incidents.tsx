@@ -1,4 +1,4 @@
-import { Layout } from '@/components/Layout';
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase';
 import { Button } from '@/components/ui/button';
@@ -150,7 +150,7 @@ export default function Incidents() {
   };
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -307,6 +307,6 @@ export default function Incidents() {
           </div>
         )}
       </div>
-    </Layout>
+    
   );
 }

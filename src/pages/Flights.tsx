@@ -1,4 +1,4 @@
-import { Layout } from '@/components/Layout';
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase';
 import { Button } from '@/components/ui/button';
@@ -231,7 +231,7 @@ export default function Flights() {
   };
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Flights & Airlines</h1>
@@ -528,6 +528,6 @@ export default function Flights() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    
   );
 }

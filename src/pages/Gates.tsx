@@ -1,4 +1,4 @@
-import { Layout } from '@/components/Layout';
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase';
 import { Button } from '@/components/ui/button';
@@ -190,7 +190,7 @@ export default function Gates() {
   };
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Gates & Runways</h1>
@@ -396,6 +396,6 @@ export default function Gates() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    
   );
 }
